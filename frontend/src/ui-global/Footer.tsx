@@ -25,7 +25,7 @@ export const Footer = () => {
 
       {/* Links */}
       <div className="py-[4rem] border-b border-dashed border-[var(--text-primary)]">
-        <div className="flex flex-wrap gap-8 md:gap-12">
+        <div className="flex flex-wrap gap-x-[1rem]  xl:gap-8 md:gap-12">
           {referenceLinks.map((item, idx) => (
             <Link
               key={idx}

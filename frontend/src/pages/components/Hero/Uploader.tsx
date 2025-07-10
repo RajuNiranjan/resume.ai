@@ -44,7 +44,7 @@ export const Uploader = () => {
   return (
     <div className="min-h-[34rem] xl:p-[1.75rem]">
       <h1
-        className={` ${inter.className}  font-[var(--font-inter)] text-center text-[var(--text-primary)] text-xs  xl:text-3xl `}
+        className={` ${inter.className}  font-[var(--font-inter)] text-center text-[var(--text-primary)] text-[1rem] leading-[3.75rem] sm:text-[2rem] sm:leading-[4.75rem] md:text-[2.05rem] md:leading-[4.75rem]  xl:text-3xl `}
       >
         <TypeAnimation
           sequence={[
@@ -62,7 +62,7 @@ export const Uploader = () => {
           repeat={Infinity}
         />
       </h1>
-      <div className="min-h-[32rem] grid grid-cols-1  xl:grid-cols-2 xl:p-[2rem] gap-[2rem]">
+      <div className="min-h-[32rem] grid grid-cols-1 lg:grid-cols-2  xl:grid-cols-2 xl:p-[2rem] gap-[2rem]">
         {/* Right Upload Section */}
         <div className="flex justify-center items-center w-full h-full">
           <div

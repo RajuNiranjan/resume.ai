@@ -10,7 +10,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <header className="w-full h-[3.5rem] ">
-        <nav className="flex justify-center items-center h-full gap-8">
+        <nav className="flex justify-center items-center flex-wrap h-full gap-[1rem] xl:gap-8">
           {referenceLinks.map((item, idx) => {
             const isActive = currentPath === item.path;
             return (
