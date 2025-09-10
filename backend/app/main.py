@@ -1,19 +1,34 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.resume_router import resume_router
+from app.core.config import get_settings
+from app.core.database import close_db_connection, connect_to_db
+from contextlib import asynccontextmanager
+from app.routes.auth import auth_route
 
-app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  
-    allow_credentials=True,
-    allow_methods=["*"],                    
-    allow_headers=["*"],                      
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await connect_to_db()
+    yield
+    await close_db_connection()  
+
+
+app = FastAPI(
+    title=get_settings().PROJECT_NAME,
+    version=get_settings().VERSION,
+    lifespan=lifespan
 )
 
-@app.get("/")
-def index():
-    return {"message": "Welcome to Resume.AI"}
+@app.get('/')
+def root():
+    settings = get_settings()
+    return {
+        "message": f"welcome to {settings.PROJECT_NAME}",
+        "version": settings.VERSION,
+        "docs": "/docs",
+    }
 
-app.include_router(resume_router, prefix="/api")
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+app.include_router(auth_route)
