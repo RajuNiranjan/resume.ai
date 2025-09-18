@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.config import get_settings
 from app.core.database import connect_to_mongo, close_mongo_server
+from app.routes.v1.auth import auth_router
+
 
 settings = get_settings()
 
@@ -27,3 +29,6 @@ async def root():
 @app.get("/health-check")
 async def health_check():
     return {"message": "Yup! I'm Good"}
+
+
+app.include_router(auth_router, prefix='/v1/api/auth', tags=["Authentication"])
