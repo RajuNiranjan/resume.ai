@@ -4,7 +4,7 @@ from app.helpers.py_objectid import PyObjectId
 from fastapi import HTTPException, status
 from bson import ObjectId
 from typing import Optional
-from app.core.security import get_hash_password, verify_password
+from app.core.security import get_hash_password, verify_password, create_refresh_token
 from datetime import datetime, timezone
 
 
@@ -62,11 +62,30 @@ class AuthService:
             )
         
         user = User(**user_dict)
-        print(user)
+
         if not verify_password(user_login.password, user.password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid credentials."
             )
         
+        
         return user
+
+
+    async def store_refresh_token(self, user_id:str, refresh_token:str):
+        await self.db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$push": {"refresh_tokens": refresh_token}
+            }
+        )
+
+
+    async def remove_refresh_token(self, user_id:str, refresh_token:str):
+        await self.db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$pull": {"refresh_tokens": refresh_token}
+            }
+        )
