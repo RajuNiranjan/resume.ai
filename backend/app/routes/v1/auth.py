@@ -31,3 +31,24 @@ async def signup(user_create:UserCreate, database: AsyncIOMotorDatabase = Depend
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f'failed to create user {str(e)}'
         )
+
+@auth_router.post('/login', status_code=status.HTTP_200_OK, response_model=UserProfile)
+async def signup(user_login:UserLogIn, database: AsyncIOMotorDatabase = Depends(get_database)) -> UserProfile:
+    try:
+        auth_service = AuthService(database)
+        user = await auth_service.authenticate_user(user_login)
+
+        return UserProfile(
+            id=str(user.id),
+            email=user.email,
+            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            profile_pic=user.profile_pic,
+            created_at=user.created_at
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f'failed to login user {str(e)}'
+        )

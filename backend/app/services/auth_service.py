@@ -4,7 +4,7 @@ from app.helpers.py_objectid import PyObjectId
 from fastapi import HTTPException, status
 from bson import ObjectId
 from typing import Optional
-from app.core.security import get_hash_password
+from app.core.security import get_hash_password, verify_password
 from datetime import datetime, timezone
 
 
@@ -46,3 +46,27 @@ class AuthService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f'failed to create user {str(e)}'
             )
+        
+    async def authenticate_user(self, user_login: UserLogIn):
+        user_dict = await self.db.users.find_one({
+            "$or": [
+                {"email": user_login.email_or_username},
+                {"username": user_login.email_or_username},
+            ]
+        })
+        
+        if not user_dict:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User not registered, please sign up."
+            )
+        
+        user = User(**user_dict)
+        print(user)
+        if not verify_password(user_login.password, user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid credentials."
+            )
+        
+        return user
