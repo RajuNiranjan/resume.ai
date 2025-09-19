@@ -34,3 +34,22 @@ def create_refresh_token(subject:Union[str, Any], expire_delta: timedelta = None
     to_encode = {"exp":expire, "sub": subject, "type":'refresh'}
 
     return jwt.encode(to_encode, settings.SECRET_KEY.get_secret_value(), algorithm=settings.ALGORITHM)
+
+
+def verify_token(token:str, type:str = 'access'):
+    settings=get_settings()
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY.get_secret_value(),
+            algorithms=[settings.ALGORITHM]
+        )
+
+        user_id=payload.get("sub")
+        token_type = payload.get("type")
+
+        if user_id is None or token_type != token:
+            return None
+        return user_id
+    except JWTError:
+        return None
