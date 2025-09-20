@@ -48,7 +48,7 @@ def verify_token(token:str, type:str = 'access'):
         user_id=payload.get("sub")
         token_type = payload.get("type")
 
-        if user_id is None or token_type != token:
+        if user_id is None or token_type != type:
             return None
         return user_id
     except JWTError:

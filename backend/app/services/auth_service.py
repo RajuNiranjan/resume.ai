@@ -1,4 +1,4 @@
-from app.schemas.user import UserCreate, UserLogIn, User
+from app.schemas.user import UserCreate, UserLogIn, User, UserProfile
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.helpers.py_objectid import PyObjectId
 from fastapi import HTTPException, status
@@ -89,3 +89,18 @@ class AuthService:
                 "$pull": {"refresh_tokens": refresh_token}
             }
         )
+    
+    async def get_user_by_id(self, user_id:str):
+        try:
+            user = await self.db.users.find_one({"_id": ObjectId(user_id)})
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="user not found"
+                )
+            return UserProfile(**user)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"failed to create user {str(e)}"
+            )
