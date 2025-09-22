@@ -4,6 +4,7 @@ from app.schemas.user import User, UserCreate, UserLogIn, UserProfile
 from app.core.database import get_database
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.core.security import create_access_token, create_refresh_token
+from app.core.auth_deps import get_current_user
 
 
 auth_router = APIRouter()
@@ -69,3 +70,7 @@ async def login(response:Response, user_login:UserLogIn, database: AsyncIOMotorD
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f'failed to login user {str(e)}'
         )
+
+@auth_router.get('/me')
+async def get_user_profile(current_user=Depends(get_current_user)):
+    return current_user
