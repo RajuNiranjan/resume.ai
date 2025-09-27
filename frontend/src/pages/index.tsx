@@ -1,14 +1,10 @@
-import { AuthCard } from "@/components/authCard";
-import { Header } from "@/components/Header";
+import { AuthenticationCard } from "@/components/AuthenticationCard";
+import { useComponentContext } from "@/hooks/useComponentContext";
 import React from "react";
 
 const Main = () => {
-  return (
-    <div>
-      {/* <Header /> */}
-      <AuthCard />
-    </div>
-  );
+  const { showAuthCard } = useComponentContext();
+  return <div>{showAuthCard && <AuthenticationCard />}</div>;
 };
 
 export default Main;
