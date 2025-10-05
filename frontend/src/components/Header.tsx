@@ -1,14 +1,20 @@
 "use client";
 import { useComponentContext } from "@/hooks/useComponentContext";
+import { RootState } from "@/redux/store";
 import { Logo } from "@/utils/logo";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { useSelector } from "react-redux";
+
+const hideHeaderRoutes = ["/login", "/signup"];
 
 export const Header: React.FC = () => {
   const { handleShowAuthCard } = useComponentContext();
   const pathname = usePathname();
-  const hideHeaderRoutes = ["/login", "/signup"];
+
+  const user = useSelector((state: RootState) => state.auth.user);
 
   if (hideHeaderRoutes.includes(pathname)) return null;
 
@@ -18,20 +24,30 @@ export const Header: React.FC = () => {
         <Logo />
       </Link>
 
-      <div className="space-x-4">
-        <button
-          onClick={() => handleShowAuthCard("login")}
-          className="text-sm hover:underline cursor-pointer"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => handleShowAuthCard("signup")}
-          className="rounded-full bg-[var(--color-bg-secondary)] px-3 py-1.5 text-sm text-[var(--color-primary)] hover:opacity-90 cursor-pointer"
-        >
-          Get Started
-        </button>
-      </div>
+      {user ? (
+        <Image
+          src={user?.profile_pic || "/default-profile.png"}
+          alt="Profile"
+          width={30}
+          height={30}
+          className="rounded-full"
+        />
+      ) : (
+        <div className="space-x-4">
+          <button
+            onClick={() => handleShowAuthCard("login")}
+            className="text-sm hover:underline cursor-pointer"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => handleShowAuthCard("signup")}
+            className="rounded-full bg-[var(--color-bg-secondary)] px-3 py-1.5 text-sm text-[var(--color-primary)] hover:opacity-90 cursor-pointer"
+          >
+            Get Started
+          </button>
+        </div>
+      )}
     </header>
   );
 };
